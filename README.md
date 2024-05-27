@@ -97,13 +97,35 @@ In this lesson, we’ll look at the lifecycle of a test—more specifically, how
 
 At the moment, we’ve got quite a bit of repetition in our test functions. In every test, we’re manually creating the same student instance on which to perform our tests. This violates the DRY, or Don’t Repeat Yourself, principle. Our `TestStudent` class contains only a few test methods, but can you imagine how much code repetition we’d have if we had many more tests to run?
 
+---
+**NOTE**
+
 Luckily for us, `Unittest` gives us two methods that will be run at the beginning and end of each test method. They are called `setUp` and `tearDown` respectively, are optional and are used to set up and teardown or destroy a testing environment for each test method. It’s important to note that these methods are defined using camel case instead of the conventional snake case which is used in Python. This is most likely due to it having been carried over from older legacy code. It’s important to declare them using camel case or they won’t run at all.
+
+---
 
 Since the `setUp` method runs before each test method, it would save us code repetition if we could define our student instance there so it can be available in each test method when it’s run.
 
 Let’s go ahead and create the `setUp` method at the beginning of our `TestStudent` class and add a reference to `self`. Next, I’ll create a student instance as an instance variable, so it needs to be prepended with the `self` keyword. Just so we can see when the `setUp` method is run, I’ll add a print statement that’ll print “setUp” to the terminal.
 
+```python
+class TestStudent(unittest.TestCase):
+
+    def setUp(self):
+        print('setUp')
+        self.student = Student('John', 'Doe')
+```
+
 Since `student` is now an instance variable, we’ll need to go and change every reference to `self.student`. Now that the `student` instance will be created in the `setUp` method at the start of each test method, we can remove the student instantiations in each of them. I’ll also add a print statement to each test method which will print the method’s name to the terminal. This will allow us to see when our test methods are run relative to the `setUp` and `tearDown` methods.
+
+```python
+# code before
+self.assertEqual(student.full_name, 'John Doe')
+
+# code now 
+self.assertEqual(self.student.full_name, 'John Doe')
+```
+
 
 We won’t be using any functionality that requires the use of the `tearDown` method, but you may be wondering what it’s for. Whereas the `setUp` method can be used to create temporary files and folders or set up a database connection during tests, the `tearDown` method would be used to remove temporary files or folders or close a connection to a database. As we don’t need any of that functionality, adding a simple statement to print “tearDown” will allow us to see when it is called behind the scenes.
 
@@ -115,8 +137,41 @@ As we don’t have a particular use for it in our test, I’ll simply show you h
 
 I’ll do the same thing for the `tearDownClass` method, but print `tearDownClass` inside the method instead. Let’s not forget to add the `@classmethod` decorator. We expect the `setUpClass` and `tearDownClass` methods to run once at the beginning and end of our tests instead of before and after each test method. With our print statements added, we should be able to verify that in the terminal, so let’s go ahead and run our tests again.
 
+```python
+@classmethod
+def setUpClass(cls):
+    print('setUpClass')
+
+@classmethod
+def tearDownClass(cls):
+    print('tearDownClass')
+
+```
+
 And we can see `setUpClass` printed once at the beginning of our tests and `tearDownClass` at the end as expected. These `Unittest` methods are very powerful and will be of great use in your future projects. Knowing what you want to set up and when to do so will allow you to utilize the lifecycle of a test to your advantage.
 
 In this lesson, you learned about the lifecycle of a test, including the `setUpClass` and `tearDownClass` methods that are run once at the beginning and end of our tests, as well as the `setUp` and `tearDown` methods that are run before and after each test method.
 
 
+## Updating End Date with Extension
+
+There are still properties in our `Student` class that aren’t really doing anything at the moment, and these are `start_date` and `end_date`. Until time travel is invented, there shouldn’t be a reason to change a student’s start date. It’s set automatically when we create an instance of the `Student` class, and as long as our time is set correctly, we won’t have to modify this value again.
+
+The end date is another matter though. Due to unforeseen circumstances, none of which of course relate to time mismanagement by a student (cough cough), a short extension could be offered to help them finish the course. This is what you’re going to implement.
+
+### Requirements
+
+- Create a test called `test_apply_extension` that will assert whether a method called `apply_extension` updates a student’s `end_date` by adding a number of days to it. The number of days needs to be passed into `apply_extension` as an argument.
+- Then create a method in the `Student` class called `apply_extension` that will have a parameter called `days` and will update a student’s `end_date` by adding the argument given as `days` to their original `end_date`.
+
+Having a look at the `timedelta` documentation is also recommended. Pause the video now and try to implement that before coming back to see how I go about doing it.
+
+### Implementation
+
+In our test file (`test_student.py`), I’ll go ahead and create a new test method called `test_apply_extension` and pass in a reference to `self`. Before adjusting the `end_date`, I’ll store the current value for the student instance in a variable called `old_end_date`. Next, I’ll call the `apply_extension` method on `student` and pass in an argument of five for the number of days required. With that in place, I’ll call `assertEqual` and test whether `student`’s `end_date` is equal to the `old_date` plus a `timedelta` of five days.
+
+If we run our tests now, we get an attribute error as expected. We haven’t created our `apply_extension` method yet, but we'll do that next.
+
+In our `Student` class, I’ll go ahead and create a method called `apply_extension` and pass in a reference to `self` as well as a parameter called `days`. Inside the method, I’ll simply set `self.end_date` equal to `self.end_date` plus a `timedelta` where the `days` parameter equals the `days` argument we pass into the method. This will update the property value for us.
+
+This is definitely simpler than the test method we had to create for it! If I go ahead and run our tests now, we can see that they all pass.
