@@ -175,3 +175,21 @@ If we run our tests now, we get an attribute error as expected. We haven’t cre
 In our `Student` class, I’ll go ahead and create a method called `apply_extension` and pass in a reference to `self` as well as a parameter called `days`. Inside the method, I’ll simply set `self.end_date` equal to `self.end_date` plus a `timedelta` where the `days` parameter equals the `days` argument we pass into the method. This will update the property value for us.
 
 This is definitely simpler than the test method we had to create for it! If I go ahead and run our tests now, we can see that they all pass.
+
+
+## Introduction to Mocking in Testing
+
+In this class, we'll explore the concept of mocking and how it enhances our ability to test functionality that could fail due to factors beyond our control.
+
+### Current Testing Scenario
+
+So far, we've written comprehensive tests for our `Student` class. These tests are comprehensive because they shouldn’t fail due to external factors. However, what if our class relies on an external API call? What if the external server is down? How can we test for scenarios that we as developers can’t control?
+
+Our methods may contain complex logic with `try-except` blocks or conditional statements that are difficult to satisfy. It can be challenging for developers to test the complete flow of logic through methods, especially when external dependencies cannot be intentionally caused to fail.
+
+### The Role of Mocking
+
+This is where mocking comes into play. The primary purpose of mocking is to focus on the behavior of the code being tested rather than the state or behavior of external dependencies.
+
+In essence, mocking allows us to imitate the behavior of external factors, enabling us to confirm that our methods function as intended.
+
