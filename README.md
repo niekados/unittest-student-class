@@ -1,4 +1,7 @@
 
+# Unittest
+
+
 In this video, I’ll introduce the Student class which we’ll be using for the remainder of this module.
 
 - Let’s  start by creating a file called student.py.   
@@ -38,3 +41,28 @@ testing in Python while creating  truly practical and usable code.
 In this video, we created a student.py file  with a Student class which will form the  
 base of our tests. It has properties, sets values  automatically on creating an instance of the class  
 and has a method to return a student’s full name.
+
+## Testing Methods and Properties
+
+we’ll look at testing the  full_name method of our Student class.
+Now that our Student class is in place,  how would we go about testing it?  
+If you thought that we would need to  create an instance of the class first...
+Well done! Before we can do that, however, we  need to do our basic setup of our test file.  
+Using the knowledge you’ve gained so far, pause  the video and create a file using the naming  
+convention mentioned in an earlier video while  also setting up an empty class for our tests.
+At this point, you should have  a file called test_student.py,  
+and our required imports including Unittest and our  Student class. A class named TestStudent that  
+inherits from unittest.TestCase is also required.  Though it isn’t required, I’ll add the same if  
+statement we used before so we can run the file  without having to specify the Unittest module.
+With that now in place, we can start  creating our first test and we’ll do so  
+for the full_name method. I’ll name the method  test_full_name and pass in a reference to self.  
+As mentioned earlier, we need to  create an instance of the Student class  
+in order to test it. I’ll name  the instance student and make  
+sure to pass in the first_name and last_name  arguments of ‘John’ and ‘Doe’ respectively.
+We can now use an assertEqual on the  student instance to see whether calling  
+the full_name method on it returns  the expected value.   
+In our case, the first_name and last_name  properties separated by a space.
+If we now run our test, we can see that it  passes. Great! That’s our first test done,  
+so we’re well on our way towards extending  the scope of our tests and Student class.
+In this video, we wrote the first test for our  Student class. We created an instance of the  
+class and asserted that the full_name method  returns the correctly formatted student name. 
