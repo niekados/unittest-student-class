@@ -193,3 +193,96 @@ This is where mocking comes into play. The primary purpose of mocking is to focu
 
 In essence, mocking allows us to imitate the behavior of external factors, enabling us to confirm that our methods function as intended.
 
+# Lesson: Testing a Student's Course Schedule with Mocking
+
+We'll create a new method which will make a request to a fictional external API to retrieve a student’s course schedule. We’ll then write a test to mock this request to make sure our method behaves as expected when the request is successful and when it fails.
+
+## Step 1: Create the Method to Retrieve Course Schedule
+
+Before we start creating our method to retrieve a student’s course schedule, we need to import the `requests` module in our `student.py` file so we can use it to make a request to our fictional API service.
+
+1. **Import the requests module**:
+    ```python
+    import requests
+    ```
+
+Now we can create our method, call it `course_schedule` and pass in a reference to `self`.
+
+2. **Create the `course_schedule` method**:
+    ```python
+    class Student:
+        def course_schedule(self):
+            response = requests.get(f"https://fictional-api.com/students/{self._last_name}/{self._first_name}")
+            if response.ok:
+                return response.text
+            else:
+                return "Something went wrong with the request!"
+    ```
+
+Inside our new method, we make a `get` request to our fictional API using a student’s `_last_name` and `_first_name` in the URL and store the response in a variable called `response`. We can now check if the request was successful using `response.ok` and return the response content itself using `response.text`. To check for a failed response, we can add an `else` statement and return the message “Something went wrong with the request!”
+
+## Step 2: Testing the Method with Mocking
+
+So far, we haven’t used mocking at all. Our `course_schedule` method will handle successful and unsuccessful requests, but as we can’t control whether an external API is available or not, it would be impossible for us to test both cases for our method. This is where mocking comes into play as it will allow us to mock the request being both successful and unsuccessful.
+
+In order for us to mock our `get` request, we need to import a method from `unittest.mock` called `patch` in our `test_student.py` file.
+
+1. **Import `patch` from `unittest.mock`**:
+    ```python
+    from unittest.mock import patch
+    import unittest
+    from student import Student
+    ```
+
+We’ll create two tests for the `course_schedule` method: one to mock a successful request and another for an unsuccessful request. 
+
+Let’s create the test for a successful request first, call it `test_course_schedule_success` and pass in a reference to `self`.
+
+The `patch` method we’ve imported can be used as a decorator or a context manager. We’ll use a context manager for our test method. We know that we want to mock a `get` request in the student module, so we can write `with patch('student.requests.get') as mocked_get:` to set our context manager. This creates an object called `mocked_get` which we can use to test the `get` request functionality. Note that we’re importing the student class at the top of the file and that’s why we use `student.requests.get` to access it.
+
+Remember that we aren’t making an actual call to an API, but mocking it instead. As such, we need to set certain values explicitly to mock successful or unsuccessful requests.
+
+Since we’re testing a successful request, which values are we interested in if we look at the `course_schedule` method? Pause and think about it before continuing.
+
+Well, we are interested in whether the response is `ok` and the response text. We can set these values in our `mocked_get` object as if it were a successful request. In order to do so, I’ll use `mocked_get.return_value.ok = True` as well as setting the response text to mock something being returned from the API. Here, I’ll just set the response text to “Success” using `mocked_get.return_value.text = "Success"`.
+
+2. **Create the test for a successful request**:
+    ```python
+    class TestStudent(unittest.TestCase):
+        def test_course_schedule_success(self):
+            with patch('student.requests.get') as mocked_get:
+                mocked_get.return_value.ok = True
+                mocked_get.return_value.text = "Success"
+                
+                student = Student()
+                schedule = student.course_schedule()
+                
+                self.assertEqual(schedule, "Success")
+    ```
+
+With that in place, let’s get the student’s course schedule and store it in a variable called `schedule`. We can now use `assertEqual` to compare the variable `schedule`, which should hold the returned response text for a successful call, with the string “Success”.
+
+Let’s run our tests to make sure they’re passing. And we can see that they are.
+
+I’ll let you create the test for a failed response. If we look at the logic of the `course_schedule` method, a failed request would happen if the response is not okay. You can also get the expected string which you can use as the `return_value.text` from the `course_schedule` method.
+
+Pause and try to implement that. Compare your code to mine when you’re done.
+
+So, I created a test called `test_course_schedule_failed` and set the `return_value.ok` to `False`. I then used the string “Something went wrong with the request!” from the `course_schedule` method in the `assertEqual` when comparing it to the return value in the `schedule` variable.
+
+3. **Create the test for a failed request**:
+    ```python
+    class TestStudent(unittest.TestCase):
+        def test_course_schedule_failed(self):
+            with patch('student.requests.get') as mocked_get:
+                mocked_get.return_value.ok = False
+                
+                student = Student()
+                schedule = student.course_schedule()
+                
+                self.assertEqual(schedule, "Something went wrong with the request!")
+    ```
+
+Running our tests shows them all passing, so we’ve successfully tested successful and unsuccessful requests for our `course_schedule` method. We all deserve a massive pat on the back for making it this far, so here is a virtual one from me.
+
+In this lesson, we implemented mocking to test successful and unsuccessful requests for our `course_schedule` method.
